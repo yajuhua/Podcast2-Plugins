@@ -1,5 +1,1 @@
-{
-    "repoVersion": "v2",
-    "updateTime": "2025-10-18",
-    "pluginList": []
-}
+{"repoVersion":"v2","updateTime":"2025-10-18","pluginList":[{"name":"bilibili.com","updateTime":"2025-10-18","version":"2.20251018.033821","uuid":"d873251e-199a-44a5-a744-0d14ee7676bb","url":"/v2/bilibili.com-2.20251018.033821-jar-with-dependencies.jar","md5":"cbed84e7f6dab91061e0496113782410"}]}
