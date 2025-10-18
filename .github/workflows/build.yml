@@ -1,0 +1,60 @@
+name: build
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions: write-all
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Extract module name and generate version
+        id: vars
+        run: |
+          title="${{ github.event.pull_request.title }}"
+          module=$(echo "$title" | sed -n 's/.*\[ie\/\([^]]*\)\].*/\1/p')
+          echo "Module: $module"    
+          version=$(date +"2.%Y%m%d.%H%M%S")
+          echo "Generated version: $version"
+          echo "module=$module" >> $GITHUB_OUTPUT
+          echo "version=$version" >> $GITHUB_OUTPUT
+          cd $module
+          artifactId=$(mvn help:evaluate -Dexpression="project.artifactId" -q -DforceStdout)
+          echo "artifactId=$artifactId" >> $GITHUB_OUTPUT
+
+      - name: Update version in pom.xml
+        run: |
+          cd ${{ steps.vars.outputs.module }}
+          sed -i '0,/<version>.*<\/version>/s//<version>${{ steps.vars.outputs.version }}<\/version>/' pom.xml
+          echo "Updated version in ${{ steps.vars.outputs.module }}/pom.xml:"
+
+      - name: Maven verify
+        run: mvn -pl ${{ steps.vars.outputs.module }},plugin-checker -am clean verify
+        
+      - name: Update metadata.json && v2 dir
+        run: |
+          git add v2/
+          git add metadata.json
+          git commit -m "Build ${{ steps.vars.outputs.module }} ${{ steps.vars.outputs.version }}"
+          git push origin HEAD:${{ github.head_ref }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugin-build
+          path: |
+            v2/${{ steps.vars.outputs.artifactId }}-${{ steps.vars.outputs.version }}-jar-with-dependencies.jar
