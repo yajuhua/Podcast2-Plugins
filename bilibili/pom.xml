@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.github.yajuhua</groupId>
   <artifactId>bilibili.com</artifactId>
-  <version>none</version>
+  <version>2.20251110.093112</version>
   <name>${artifactId}</name>
   <parent>
     <groupId>io.github.yajuhua</groupId>
