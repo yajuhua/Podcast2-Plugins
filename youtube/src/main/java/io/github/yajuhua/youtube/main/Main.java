@@ -1,6 +1,8 @@
 package io.github.yajuhua.youtube.main;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import io.github.yajuhua.download.commons.Operation;
 import io.github.yajuhua.download.commons.Type;
 import io.github.yajuhua.download.manager.DownloadManager;
@@ -17,6 +19,7 @@ import io.github.yajuhua.podcast2API.utils.SettingUtils;
 import io.github.yajuhua.youtube.downloader.VideoDownloadConfig;
 import io.github.yajuhua.youtube.downloader.VideoDownloader;
 import io.github.yajuhua.youtube.dto.ChannelDTO;
+import io.github.yajuhua.youtube.dto.EntrieDTO;
 import io.github.yajuhua.youtube.dto.ItemDTO;
 import io.github.yajuhua.youtube.utils.CmdLineUtil;
 import io.github.yajuhua.youtube.utils.NetworkUtil;
@@ -137,29 +140,40 @@ public class Main implements Podcast2 {
 
         //构建参数
         Map options = new HashMap();
-        options.put("-j", null);
+        options.put("-J", null);
         if (proxyUrl != null){
             options.put("--proxy", proxyUrl);
         }
-        if (matcherVideos.matches()){
-            //yt-dlp --playlist-items 1 -j https://www.youtube.com/@MuseAsia/videos
-            options.put("--playlist-items", "1");
-        }else if (matcherStreams.matches()){
-            //yt-dlp --match-filters !is_live --no-playlist  --max-downloads 1 -j "https://www.youtube.com/@MuseAsia/streams"
-            options.put("--match-filters", "!is_live");
-            options.put("--no-playlist", null);
-            options.put("--max-downloads", "1");
-        }else {
+        //yt-dlp --flat-playlist --playlist-end 5 -J "https://www.youtube.com/@MuseAsia/videos"
+        //yt-dlp --flat-playlist --playlist-end 5 -J "https://www.youtube.com/@MuseAsia/streams"
+        if (!matcherVideos.matches() && !matcherStreams.matches()){
             throw new Exception("不支持该链接: " + params.getUrl());
         }
-
+        options.put("--flat-playlist", null);
+        options.put("--playlist-end", "5");
         //获取json数据
         String jsonStr = CmdLineUtil.exec("yt-dlp", options, params.getUrl());
-        ItemDTO itemDTO = gson.fromJson(jsonStr, ItemDTO.class);
-
-        //封装
-        items.add(getItem(itemDTO.getOriginalUrl()));
-        return items;
+        JsonObject jsonObject = gson.fromJson(jsonStr, JsonObject.class);
+        List<EntrieDTO> entries = gson.fromJson(jsonObject.getAsJsonArray("entries")
+                ,new TypeToken<List<EntrieDTO>>(){}.getType());
+        for (EntrieDTO entry : entries) {
+            //满足要求：availability == null/public, live_status == null/was_live
+            if (
+                    (entry.getAvailability() == null
+                    || entry.getAvailability().equalsIgnoreCase("public")
+                    || entry.getAvailability().equalsIgnoreCase("null")
+                    )
+                    &&
+                    ( entry.getLiveStatus() == null
+                    || entry.getLiveStatus().equalsIgnoreCase("was_live")
+                    || entry.getLiveStatus().equalsIgnoreCase("null")
+                    )
+            ){
+                items.add(getItem(entry.getUrl()));
+                return items;
+            }
+        }
+        throw new RuntimeException("未找到可用视频: " + params.getUrl());
     }
 
     @Override
