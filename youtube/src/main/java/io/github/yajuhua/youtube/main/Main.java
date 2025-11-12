@@ -110,6 +110,10 @@ public class Main implements Podcast2 {
             options.put("--proxy", proxyUrl);
         }
         options.put("-J", null);
+        options.put("--flat-playlist", null);
+        options.put("--flat-playlist", null);
+        options.put("--skip-download", null);
+        options.put("--no-warnings", null);
         String jsonStr = CmdLineUtil.exec("yt-dlp", options, link);
         ItemDTO itemDTO = gson.fromJson(jsonStr, ItemDTO.class);
 
