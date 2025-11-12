@@ -4,6 +4,7 @@ import io.github.yajuhua.podcast2API.Params;
 import io.github.yajuhua.podcast2API.Type;
 import io.github.yajuhua.podcast2API.utils.CommonUtils;
 
+import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.HashMap;
 import java.util.Map;
@@ -87,8 +88,9 @@ public class VideoDownloadConfig {
         }
         //设置代理
         if (!proxy.type().equals(Proxy.Type.DIRECT)){
-            String proxyStr = proxy.type().name().toLowerCase() + ":/" + proxy.address().toString();
-            args.put("--proxy",proxyStr);
+            InetSocketAddress address = (InetSocketAddress) proxy.address();
+            String proxyUrl = proxy.type().name().toLowerCase() + "://" + address.getHostName() + ":" + address.getPort();
+            args.put("--proxy",proxyUrl);
         }
 
         return args;
