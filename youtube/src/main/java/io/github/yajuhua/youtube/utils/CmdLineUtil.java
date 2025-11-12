@@ -1,5 +1,7 @@
 package io.github.yajuhua.youtube.utils;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -10,6 +12,7 @@ import java.util.Map;
 /**
  * cmd命令工具类
  */
+@Slf4j
 public class CmdLineUtil {
 
     /**
@@ -19,6 +22,7 @@ public class CmdLineUtil {
      * @throws Exception
      */
     public static String exec(List<String> cmd) throws Exception {
+        log.info("执行命令: {}", cmd);
         BufferedReader brInput = null;
         BufferedReader brError = null;
         try {
