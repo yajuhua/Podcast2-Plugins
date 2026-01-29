@@ -111,21 +111,21 @@ public class VideoDownloadConfig {
         final String AVC_CODEC = "avc";
         final String VP9_CODEC = "vp9";
 
-        // 无视频编码的情况下处理分辨率
-        if (vcodec == null) {
-            if (WORST_RESOLUTION.equals(resolution)) {
-                args.put("-f", "worstvideo+worstaudio");
-            } else if (BEST_RESOLUTION.equals(resolution)) {
-                args.put("-f", "bestvideo+bestaudio");
-            } else if (DEFAULT_RESOLUTION.equals(resolution)) {
-                //yt-dlp 默认是bestvideo*+bestaudio/best
+        if(!DEFAULT_RESOLUTION.equals(resolution)){
+            // 无视频编码的情况下处理分辨率
+            if (vcodec == null) {
+                if (WORST_RESOLUTION.equals(resolution)) {
+                    args.put("-f", "worstvideo+worstaudio");
+                } else if (BEST_RESOLUTION.equals(resolution)) {
+                    args.put("-f", "bestvideo+bestaudio");
+                } else {
+                    args.put("-f", "(bv*[resolution~=" + resolution + "p]+ba)/(bv*+ba)");
+                }
             } else {
-                args.put("-f", "(bv*[resolution~=" + resolution + "p]+ba)/(bv*+ba)");
+                // 根据视频编码和分辨率处理
+                String format = buildFormatString(vcodec, resolution, WORST_RESOLUTION, BEST_RESOLUTION);
+                args.put("-f", format);
             }
-        } else {
-            // 根据视频编码和分辨率处理
-            String format = buildFormatString(vcodec, resolution, WORST_RESOLUTION, BEST_RESOLUTION);
-            args.put("-f", format);
         }
     }
 
