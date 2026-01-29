@@ -237,7 +237,7 @@ public class Main implements Podcast2 {
         //分辨率
         Select selectResolution = new Select();
         selectResolution.setName("分辨率");
-        selectResolution.setOptions(Arrays.asList("最差","最佳"));
+        selectResolution.setOptions(Arrays.asList("最差","最佳", "默认"));
         selectList.add(selectResolution);
 
         //字幕
