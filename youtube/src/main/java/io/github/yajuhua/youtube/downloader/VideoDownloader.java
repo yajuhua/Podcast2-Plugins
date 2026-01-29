@@ -73,6 +73,7 @@ public class VideoDownloader implements Downloader,Runnable {
         }
         args.put("--path",dir.getAbsolutePath());
         args.put("--output",uuid + ".%(ext)s");
+        args.put("--extractor-args","youtube:player_client=default,-android_sdkless");
         List list = CmdLineUtil.optionsToList(args);
         list.add(0,"yt-dlp");
         list.add(videoLink);
