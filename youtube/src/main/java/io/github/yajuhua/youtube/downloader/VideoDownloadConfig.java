@@ -87,6 +87,7 @@ public class VideoDownloadConfig {
                     break;
             }
         }
+        */
         //设置代理
         if (!proxy.type().equals(Proxy.Type.DIRECT)){
             InetSocketAddress address = (InetSocketAddress) proxy.address();
@@ -96,7 +97,6 @@ public class VideoDownloadConfig {
 
         return args;
     }
-    */
 
     /**
      * 根据分辨率和视频编码配置下载参数
