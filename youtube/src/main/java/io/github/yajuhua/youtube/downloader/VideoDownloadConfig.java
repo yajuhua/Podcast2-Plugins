@@ -75,6 +75,7 @@ public class VideoDownloadConfig {
            }
         }
 
+        /*
         //默认-f选项
         if (!args.containsKey("-f") && !args.containsKey("--format") && fileExtName == null){
             switch (params.getType()){
@@ -86,6 +87,7 @@ public class VideoDownloadConfig {
                     break;
             }
         }
+        */
         //设置代理
         if (!proxy.type().equals(Proxy.Type.DIRECT)){
             InetSocketAddress address = (InetSocketAddress) proxy.address();
