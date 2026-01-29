@@ -75,6 +75,7 @@ public class VideoDownloadConfig {
            }
         }
 
+        /*
         //默认-f选项
         if (!args.containsKey("-f") && !args.containsKey("--format") && fileExtName == null){
             switch (params.getType()){
@@ -95,6 +96,7 @@ public class VideoDownloadConfig {
 
         return args;
     }
+    */
 
     /**
      * 根据分辨率和视频编码配置下载参数
