@@ -75,6 +75,7 @@ public class VideoDownloadConfig {
            }
         }
 
+        /*
         //默认-f选项
         if (!args.containsKey("-f") && !args.containsKey("--format") && fileExtName == null){
             switch (params.getType()){
@@ -86,6 +87,7 @@ public class VideoDownloadConfig {
                     break;
             }
         }
+        */
         //设置代理
         if (!proxy.type().equals(Proxy.Type.DIRECT)){
             InetSocketAddress address = (InetSocketAddress) proxy.address();
@@ -105,6 +107,7 @@ public class VideoDownloadConfig {
     private static void configureResolutionAndCodec(Map<String, String> args, String resolution, String vcodec) {
         final String BEST_RESOLUTION = "最佳";
         final String WORST_RESOLUTION = "最差";
+        final String DEFAULT_RESOLUTION = "默认";
         final String AVC_CODEC = "avc";
         final String VP9_CODEC = "vp9";
 
@@ -114,6 +117,8 @@ public class VideoDownloadConfig {
                 args.put("-f", "worstvideo+worstaudio");
             } else if (BEST_RESOLUTION.equals(resolution)) {
                 args.put("-f", "bestvideo+bestaudio");
+            } else if (DEFAULT_RESOLUTION.equals(resolution)) {
+                //yt-dlp 默认是bestvideo*+bestaudio/best
             } else {
                 args.put("-f", "(bv*[resolution~=" + resolution + "p]+ba)/(bv*+ba)");
             }
