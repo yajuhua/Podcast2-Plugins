@@ -75,6 +75,7 @@ public class VideoDownloadConfig {
            }
         }
 
+        /*
         //默认-f选项
         if (!args.containsKey("-f") && !args.containsKey("--format") && fileExtName == null){
             switch (params.getType()){
@@ -86,6 +87,7 @@ public class VideoDownloadConfig {
                     break;
             }
         }
+        */
         //设置代理
         if (!proxy.type().equals(Proxy.Type.DIRECT)){
             InetSocketAddress address = (InetSocketAddress) proxy.address();
@@ -105,22 +107,25 @@ public class VideoDownloadConfig {
     private static void configureResolutionAndCodec(Map<String, String> args, String resolution, String vcodec) {
         final String BEST_RESOLUTION = "最佳";
         final String WORST_RESOLUTION = "最差";
+        final String DEFAULT_RESOLUTION = "默认";
         final String AVC_CODEC = "avc";
         final String VP9_CODEC = "vp9";
 
-        // 无视频编码的情况下处理分辨率
-        if (vcodec == null) {
-            if (WORST_RESOLUTION.equals(resolution)) {
-                args.put("-f", "worstvideo+worstaudio");
-            } else if (BEST_RESOLUTION.equals(resolution)) {
-                args.put("-f", "bestvideo+bestaudio");
+        if(!DEFAULT_RESOLUTION.equals(resolution)){
+            // 无视频编码的情况下处理分辨率
+            if (vcodec == null) {
+                if (WORST_RESOLUTION.equals(resolution)) {
+                    args.put("-f", "worstvideo+worstaudio");
+                } else if (BEST_RESOLUTION.equals(resolution)) {
+                    args.put("-f", "bestvideo+bestaudio");
+                } else {
+                    args.put("-f", "(bv*[resolution~=" + resolution + "p]+ba)/(bv*+ba)");
+                }
             } else {
-                args.put("-f", "(bv*[resolution~=" + resolution + "p]+ba)/(bv*+ba)");
+                // 根据视频编码和分辨率处理
+                String format = buildFormatString(vcodec, resolution, WORST_RESOLUTION, BEST_RESOLUTION);
+                args.put("-f", format);
             }
-        } else {
-            // 根据视频编码和分辨率处理
-            String format = buildFormatString(vcodec, resolution, WORST_RESOLUTION, BEST_RESOLUTION);
-            args.put("-f", format);
         }
     }
 
