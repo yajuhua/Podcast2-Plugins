@@ -60,7 +60,7 @@ public class Main implements Podcast2 {
     @Override
     public Channel channel() throws Exception {
         //1.校验链接
-        String regex = "https://www\\.youtube\\.com/@[\\w-]+/(videos|streams)";
+        String regex = "https://www\.youtube\.com/@[\p{L}\p{N}-._]+/(videos|streams)";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(params.getUrl());
         if (!matcher.matches()){
@@ -138,8 +138,8 @@ public class Main implements Podcast2 {
     @Override
     public List<Item> items() throws Exception {
         //匹配链接
-        Matcher matcherVideos = Pattern.compile("https://www\\.youtube\\.com/@[\\w-]+/videos").matcher(params.getUrl());
-        Matcher matcherStreams = Pattern.compile("https://www\\.youtube\\.com/@[\\w-]+/streams").matcher(params.getUrl());
+        Matcher matcherVideos = Pattern.compile("https://www\\.youtube\\.com/@[\p{L}\p{N}-._]+/videos").matcher(params.getUrl());
+        Matcher matcherStreams = Pattern.compile("https://www\\.youtube\\.com/@[\p{L}\p{N}-._]+/streams").matcher(params.getUrl());
         List<Item> items = new ArrayList<>();
 
         //构建参数
