@@ -22,20 +22,18 @@ public class NetworkUtil {
                     && params.getSettings() != null
                     && !params.getSettings().isEmpty()) {
                 Map<String, String> map = SettingUtils.SettingListToMap(params.getSettings());
-                String proxyStr = null;
                 //提取代理字符串
                 if (map.containsKey("http代理")) {
-                    proxyStr = "http://" + map.get("http代理");
-                } else if (map.containsKey("socks代理")) {
-                    proxyStr = "socks://" + map.get("socks代理");
-                }
-                //转换成Proxy对象
-                if (proxyStr != null && !proxyStr.isEmpty()) {
-                    URL proxyUrl = new URL(proxyStr);
+                    URL proxyUrl = new URL("http://" + map.get("http代理"));
                     String protocol = proxyUrl.getProtocol().toUpperCase();
                     int port = proxyUrl.getPort();
                     String host = proxyUrl.getHost();
                     return new Proxy(Proxy.Type.valueOf(protocol), new InetSocketAddress(host, port));
+                } else if (map.containsKey("socks代理")) {
+                    URL proxyUrl = new URL("http://" + map.get("socks代理"));
+                    int port = proxyUrl.getPort();
+                    String host = proxyUrl.getHost();
+                    return new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(host, port));
                 }
             }
             return Proxy.NO_PROXY;
