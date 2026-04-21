@@ -3,13 +3,13 @@ package io.github.yajuhua.youtube.downloader;
 import io.github.yajuhua.podcast2API.Params;
 import io.github.yajuhua.podcast2API.Type;
 import io.github.yajuhua.podcast2API.utils.CommonUtils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
+@Slf4j
 public class VideoDownloadConfig {
 
     /**
@@ -91,6 +91,29 @@ public class VideoDownloadConfig {
             InetSocketAddress address = (InetSocketAddress) proxy.address();
             String proxyUrl = proxy.type().name().toLowerCase() + "://" + address.getHostName() + ":" + address.getPort();
             args.put("--proxy",proxyUrl);
+        }
+
+        //自定义options
+        try {
+            String overOptionsStr = extendData.get("自定义参数可追加或覆盖现有参数");
+            if (overOptionsStr != null && !overOptionsStr.isEmpty()){
+                List<String> overOptions = Arrays.asList(overOptionsStr.trim().split(","));
+                for (int i = 0; i < overOptions.size(); i++) {
+                    String key = overOptions.get(i).trim();
+                    if (key.startsWith("-")) {
+                        String value = null;
+                        if (i + 1 < overOptions.size() && !overOptions.get(i + 1).startsWith("-")) {
+                            value = overOptions.get(i + 1).trim();
+                            i++;
+                        }
+
+                        args.put(key, value);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("自定义参数可追加或覆盖现有参数错误: {},参考格式--sleep-interval,10,--max-sleep-interval,10", e.getMessage());
+            throw new RuntimeException(e);
         }
 
         return args;
