@@ -202,6 +202,8 @@ public class Main implements Podcast2 {
         map.put("keyInfo","需要没有被ban的IP");
         map.put("支持videos","https://www.youtube.com/@MuseAsia/videos");
         map.put("支持streams","https://www.youtube.com/@MuseAsia/streams");
+        map.put("自定义参数可追加或覆盖现有参数示例","--sleep-interval,10,--max-sleep-interval,10");
+        map.put("自定义参数可追加或覆盖现有参数要求","在英文状态下输入");
 
         return map;
     }
@@ -258,8 +260,12 @@ public class Main implements Podcast2 {
         //自定义--merge-output-format
         Input mergeOutputFormat = new Input("自定义扩展名");
 
-        extendList.setInputList(Arrays.asList(formatInput, mergeOutputFormat));
+        //自定义参数，将会覆盖现有的参数
+        Input overOptions = new Input("自定义参数可追加或覆盖现有参数");
+
+        extendList.setInputList(Arrays.asList(formatInput, mergeOutputFormat, overOptions));
         extendList.setSelectList(selectList);
+
 
         return extendList;
     }
